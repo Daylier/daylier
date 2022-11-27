@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
+@import 'styles/colors';
+@import 'styles/cards';
+@import 'styles/buttons';
+@import 'styles/variables';
+@import 'styles/tools';
+@import 'styles/typography';
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: $default-font-family;
+    font-size: $default-font-size;
+    color: $black;
+}
+
+.fluid-frame {
+    margin: 10px $app-margin;
+    min-height: calc(100vh - #{$navbar-height + $footer-height});
+}

@@ -1,0 +1,10 @@
+@import 'colors';
+@import 'tools';
+
+h1 {
+    @include fontSize(28px);
+    font-weight: 600;
+}
+
+
+// todo: standard styles for h1-h6, p, <code>, etc...

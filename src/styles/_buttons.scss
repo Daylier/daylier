@@ -1,0 +1,133 @@
+@import './colors';
+@import './tools';
+@import './variables';
+
+@mixin da-color-button($color, $darken-pct: 10%) {
+  color: $white;
+  background-color: $color;
+
+  &:focus {
+      background-color: shade($color, $darken-pct * 2);
+      box-shadow: 0 0 0 3px transparentize($color, 0.6);
+  }
+  &:hover {
+      background-color: shade($color, $darken-pct);
+      color: $white;
+  }
+  &:active {
+      background-color: shade($color, $darken-pct * 2);
+      color: $white;
+      box-shadow: none;
+  }
+
+  &[disabled],
+  &[disabled]:hover,
+  &[disabled]:focus,
+  &[disabled]:active {
+      background-color: $color;
+      opacity: 0.35;
+  }
+}
+
+.da-btn {
+    background-color: $green;
+    color: $white;
+    height: 36px;
+    @include fontSize(16px);
+    padding: 0 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    border: none;
+    border-radius: 5px;
+    font-family: $default-font-family;
+
+    &:hover, &:focus {
+        background-color: shade($green, 10%);
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+    }
+
+    &:focus {
+        outline: none;
+        border-bottom: none;
+        box-shadow: 0 0 0 2px transparentize($green, 0.6);
+    }
+
+    &:active {
+        background-image: none;
+        outline: none;
+        background-color: shade($green, 10%);
+        box-shadow: none;
+    }
+
+    // Remove Firefox's active state dotted outline b/c we have our own highlight
+    &::-moz-focus-inner {
+        border:0;
+    }
+
+    &.btn-sm {
+        padding: 3px 12px;
+        height: 26px;
+        min-width: auto;
+        @include fontSize(14px);
+        line-height: 14px;
+    }
+
+    &.btn-green {
+        @include da-color-button($green);
+    }
+    &.btn-gray {
+        @include da-color-button($slate-gray-600);
+    }
+    &.btn-blue {
+        @include da-color-button($dark-blue);
+    }
+    &.btn-orange {
+        @include da-color-button($orange);
+    }
+    &.btn-red {
+        @include da-color-button($red);
+    }
+    &.btn-maroon {
+        @include da-color-button($maroon);
+    }
+    &.btn-minimal, &.btn-minimal-border {
+        background-color: transparent;
+        color: $slate-gray-600;
+
+        &:hover {
+            color: $black;
+            background-color: $slate-gray-200;
+        }
+        &:focus {
+            box-shadow: 0 0 0 2px transparentize($dark-blue, 0.6);
+        }
+        &:active {
+            background-color: darken($slate-gray-200, 5%);
+            box-shadow: none;
+        }
+        &[disabled],
+        &[disabled]:hover,
+        &[disabled]:focus,
+        &[disabled]:active {
+            background-color: transparent;
+            color: $slate-gray-300;
+        }
+    }
+
+    &.btn-minimal-border {
+        border: 1px solid $slate-gray-400;
+    }
+}

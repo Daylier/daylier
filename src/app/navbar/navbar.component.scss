@@ -1,0 +1,44 @@
+@import '../../styles/colors';
+@import '../../styles/variables';
+
+.navbar {
+    height: $navbar-height;
+    background-color: $blue;
+    color: $white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 $app-margin;
+    position: sticky;
+    box-shadow: 0 1px 7px $shadow;
+}
+
+.main-brand {
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    background-image: url("/assets/daylier-logo.svg");
+    display: inline-block;
+    width: 140px;
+    height: 44px;
+    text-indent: -1000px;
+    background-repeat: no-repeat;
+    margin: 0 44px 0 0;
+}
+
+.tagline {
+    font-size: 14px;
+    position: relative;
+    top: 3px;
+}
+
+.cta {
+    padding: 0 20px;
+    font-size: 13px;
+    height: 100%;
+    border-left: 1px solid rgba(0, 0, 0, 10%);
+    display: flex;
+    align-items: center;
+}

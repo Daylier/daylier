@@ -1,0 +1,7 @@
+{
+    "yaml.customTags": [
+        "!script"
+    ],
+    "prettier.tabWidth": 4,
+    "editor.tabSize": 4
+}

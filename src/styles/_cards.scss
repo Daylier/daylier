@@ -1,0 +1,9 @@
+@import 'colors';
+
+.da-card {
+    border: 1px solid $slate-gray-200;
+    background-color: $white;
+    box-shadow: 1px 1px 10px $shadow;
+    border-radius: 5px;
+    padding: 20px;
+}
