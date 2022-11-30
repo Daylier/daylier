@@ -51,5 +51,5 @@ import 'zone.js'; // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 
-(window as any).global = window;
-(window as any).__dirname = '/there/is/no/such/thing';
+(window as any).global = window; // this is needed for jimp to work
+(window as any).__dirname = '/there/is/no/such/thing'; // this is needed for jimp to work
