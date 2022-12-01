@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import Jimp from 'jimp';
+import { ImageConvertService, MIMEType } from './image-convert.service';
 
 @Component({
   selector: 'app-tool-one',
@@ -7,17 +7,15 @@ import Jimp from 'jimp';
   styleUrls: ['./tool-one.component.scss'],
 })
 export class ToolOneComponent implements OnInit {
-  constructor() {
-    // lets test if this works
-    Jimp.read(
-      'https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_1280.png'
-    ).then((image: any) => {
-      console.log(image);
-      image.getBase64(Jimp.MIME_JPEG, (err: any, src: any) => {
-        console.log(src);
-      });
+  constructor(private imageConvertService: ImageConvertService) {}
+
+  convertImage(file: File, outputMimeType: MIMEType): void {
+    this.imageConvertService.convertImage().then((result) => {
+      console.log(result);
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.convertImage();
+  }
 }
