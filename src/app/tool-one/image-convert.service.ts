@@ -1,31 +1,47 @@
 import { Injectable } from '@angular/core';
 import Jimp from 'jimp';
 
-export type MIMEType = string;
-
-export const MIME_JPG: MIMEType = 'image/jpg';
-export const MIME_JPEG: MIMEType = 'image/jpeg';
-export const MIME_PNG: MIMEType = 'image/png';
-export const MIME_BMP: MIMEType = 'image/bmp';
-export const MIME_TIFF: MIMEType = 'image/tiff';
-export const MIME_GIF: MIMEType = 'image/gif';
-
-let jimpTo: MIMEType[] = [
-  MIME_JPG,
-  MIME_JPEG,
-  MIME_PNG,
-  MIME_BMP,
-  MIME_TIFF,
-  MIME_GIF,
+Jimp.MIME_JPEG;
+export let MIMETypes: string[] = [
+  Jimp.MIME_JPEG,
+  Jimp.MIME_PNG,
+  Jimp.MIME_BMP,
+  Jimp.MIME_TIFF,
+  Jimp.MIME_GIF,
 ];
-let jimpFrom: MIMEType[] = [
-  MIME_JPG,
-  MIME_JPEG,
-  MIME_PNG,
-  MIME_BMP,
-  MIME_TIFF,
-  MIME_GIF,
+
+let jimpTo: string[] = [
+  Jimp.MIME_JPEG,
+  Jimp.MIME_PNG,
+  Jimp.MIME_BMP,
+  Jimp.MIME_TIFF,
+  Jimp.MIME_GIF,
 ];
+let jimpFrom: string[] = [
+  'image/jpg',
+  Jimp.MIME_JPEG,
+  Jimp.MIME_PNG,
+  Jimp.MIME_BMP,
+  Jimp.MIME_TIFF,
+  Jimp.MIME_GIF,
+];
+
+let mimeToExt: { [key: string]: string } = {
+  'image/jpg': 'jpg',
+  [Jimp.MIME_JPEG]: 'jpeg',
+  [Jimp.MIME_PNG]: 'png',
+  [Jimp.MIME_BMP]: 'bmp',
+  [Jimp.MIME_TIFF]: 'tiff',
+  [Jimp.MIME_GIF]: 'gif',
+};
+
+export interface ConvertableFile {
+  file: File;
+  outPutMimeType: string;
+  convertedFileName: string;
+  convertedBase64: string | null;
+  error: Error | null;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -33,22 +49,48 @@ let jimpFrom: MIMEType[] = [
 export class ImageConvertService {
   constructor() {}
 
-  convertImage(file: File, outputMimeType: MIMEType): Promise<string> {
-    if (jimpFrom.includes(file.type) && jimpTo.includes(outputMimeType)) {
-      return this.jimpConvert(file, outputMimeType);
-    }
-    throw new Error('Unsupported conversion');
+  // given a file, return it converted to the outputMimeType
+  convertImage(file: ConvertableFile): Promise<ConvertableFile> {
+    let p = new Promise<ConvertableFile>((resolve, reject) => {
+      if (
+        jimpFrom.includes(file.file.type) &&
+        jimpTo.includes(file.outPutMimeType)
+      ) {
+        this.jimpConvert(file.file, file.outPutMimeType)
+          .then((data) => {
+            // able to convert
+            file.convertedFileName = this.changeExt(file);
+            file.convertedBase64 = data;
+            console.log(data);
+            file.error = null;
+          })
+          .catch((error) => {
+            // failed to convert
+            file.convertedBase64 = null;
+            file.error = error;
+          })
+          .finally(() => {
+            // always resolve with file
+            resolve(file);
+          });
+      } else {
+        // if we don't support just reosolve with file
+        file.error = new Error('Unsupported file type');
+        resolve(file);
+      }
+    });
+    return p;
   }
 
+  // converts a file using Jimp
   private async jimpConvert(
     file: File,
-    outputMimeType: MIMEType
+    outputMimeType: string
   ): Promise<string> {
     let arrayBuffer: ArrayBuffer;
     try {
       arrayBuffer = await file.arrayBuffer();
     } catch (error) {
-      console.log(error);
       throw new Error('Error converting image to array buffer');
     }
 
@@ -58,16 +100,36 @@ export class ImageConvertService {
     try {
       image = await Jimp.read(buffer);
     } catch (error) {
-      console.log(error);
       throw new Error('Error reading image');
     }
 
     try {
-      let base64Src = await image.getBase64Async(Jimp.MIME_JPEG);
-      return base64Src;
+      let data = await image.getBufferAsync(outputMimeType);
+      return 'data:' + outputMimeType + ';base64,' + data.toString('base64');
     } catch (error) {
-      console.log(error);
       throw Error('Error converting image to base64');
     }
+  }
+
+  // return the file's name with the extension changed to its outputMimeType
+  private changeExt(file: ConvertableFile): string {
+    console.log(file.outPutMimeType);
+    console.log(mimeToExt);
+    if (!mimeToExt.hasOwnProperty(file.outPutMimeType)) {
+      throw new Error('Invalid MIME Type');
+    }
+
+    // Get the new extension for the file
+    let ext = mimeToExt[file.outPutMimeType];
+
+    // Get the filename without the extension
+    let pos = file.file.name.lastIndexOf('.');
+    let filename = file.file.name.substring(
+      0,
+      pos < 0 ? file.file.name.length : pos
+    );
+
+    // join the new extension to the file.file.name and return
+    return [filename, ext].join('.');
   }
 }
