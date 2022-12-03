@@ -1,4 +1,42 @@
 <div class="fluid-frame">
-    <h1>Image Conversion</h1>
-    <div class="blank-canvas"></div>
+  <h1>Image Conversion</h1>
+  <div class="blank-canvas">
+    <input
+      multiple
+      type="file"
+      onclick="this.value = null"
+      (change)="onFileChange($event)"
+    />
+    <select (change)="onOutputMimeTypeChange($event)">
+      <option *ngFor="let mimeType of mimeTypes" [value]="mimeType">
+        {{ mimeType }}
+      </option>
+    </select>
+
+    <button (click)="convertImage()">Convert</button>
+
+    <div *ngFor="let file of files">
+      <span>Name: {{ file.file.name }}</span>
+      <select
+        [disabled]="file.convertedBase64 || file.error ? true : null"
+        (change)="onFileOutputMimeTypeChange(file, $event)"
+      >
+        <option
+          *ngFor="let mimeType of mimeTypes"
+          [value]="mimeType"
+          [selected]="mimeType === file.outPutMimeType"
+        >
+          {{ mimeType }}
+        </option>
+      </select>
+      <button
+        *ngIf="file.convertedBase64"
+        (click)="downloadImage(file, $event)"
+      >
+        download
+      </button>
+      <span *ngIf="file.error"> Error: {{ file.error }}</span>
+      <button (click)="deleteFile(file)">Delete</button>
+    </div>
+  </div>
 </div>
