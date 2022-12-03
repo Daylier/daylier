@@ -61,7 +61,6 @@ export class ToolOneComponent implements OnInit {
       return;
     }
     for (let i = 0; i < target.files.length; i++) {
-      console.log(this.outputMimeType);
       this.files.push({
         file: target.files[i],
         convertedFileName: target.files[i].name,

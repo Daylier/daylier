@@ -51,27 +51,34 @@ export class ImageConvertService {
 
   // given a file, return it converted to the outputMimeType
   convertImage(file: ConvertableFile): Promise<ConvertableFile> {
+    // feel like i should make a copy of the file here
+    let newFile: ConvertableFile = {
+      file: file.file,
+      outPutMimeType: file.outPutMimeType,
+      convertedFileName: file.file.name,
+      convertedBase64: '',
+      error: null,
+    };
     let p = new Promise<ConvertableFile>((resolve, reject) => {
       if (
-        jimpFrom.includes(file.file.type) &&
-        jimpTo.includes(file.outPutMimeType)
+        jimpFrom.includes(newFile.file.type) &&
+        jimpTo.includes(newFile.outPutMimeType)
       ) {
-        this.jimpConvert(file.file, file.outPutMimeType)
+        this.jimpConvert(newFile.file, newFile.outPutMimeType)
           .then((data) => {
             // able to convert
-            file.convertedFileName = this.changeExt(file);
-            file.convertedBase64 = data;
-            console.log(data);
-            file.error = null;
+            newFile.convertedFileName = this.changeExt(newFile);
+            newFile.convertedBase64 = data;
+            newFile.error = null;
           })
           .catch((error) => {
             // failed to convert
-            file.convertedBase64 = null;
-            file.error = error;
+            newFile.convertedBase64 = null;
+            newFile.error = error;
           })
           .finally(() => {
             // always resolve with file
-            resolve(file);
+            resolve(newFile);
           });
       } else {
         // if we don't support just reosolve with file
@@ -113,8 +120,6 @@ export class ImageConvertService {
 
   // return the file's name with the extension changed to its outputMimeType
   private changeExt(file: ConvertableFile): string {
-    console.log(file.outPutMimeType);
-    console.log(mimeToExt);
     if (!mimeToExt.hasOwnProperty(file.outPutMimeType)) {
       throw new Error('Invalid MIME Type');
     }
