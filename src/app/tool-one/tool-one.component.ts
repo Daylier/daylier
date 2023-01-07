@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  ImageConvertService,
-  MIMETypes,
-  ConvertableFile,
-} from './image-convert.service';
+import { ImageConvertService, ConvertibleFile } from './image-convert.service';
+
+const MIMETypes: string[] = [
+  'image/jpeg',
+  'image/png',
+  'image/bmp',
+  'image/tiff',
+  'image/gif',
+  'application/pdf',
+];
 
 @Component({
   selector: 'app-tool-one',
@@ -15,7 +20,7 @@ export class ToolOneComponent implements OnInit {
 
   mimeTypes: string[] = MIMETypes;
   outputMimeType: string = MIMETypes[0];
-  files: ConvertableFile[] = [];
+  files: ConvertibleFile[] = [];
 
   convertImage(): void {
     if (this.files.length == 0 || !this.outputMimeType) {
@@ -27,16 +32,16 @@ export class ToolOneComponent implements OnInit {
       }
       this.imageConvertService
         .convertImage(this.files[i])
-        .then((file: ConvertableFile) => {
+        .then((file: ConvertibleFile) => {
           this.files[i] = file;
         })
-        .catch((file: ConvertableFile) => {
+        .catch((file: ConvertibleFile) => {
           this.files[i] = file;
         });
     }
   }
 
-  downloadImage(file: ConvertableFile, event: Event) {
+  downloadImage(file: ConvertibleFile, event: Event) {
     let a: any = document.createElement('a');
     if (!a) {
       return;
@@ -46,7 +51,7 @@ export class ToolOneComponent implements OnInit {
     a.click();
   }
 
-  onFileOutputMimeTypeChange(file: ConvertableFile, event: Event): void {
+  onFileOutputMimeTypeChange(file: ConvertibleFile, event: Event): void {
     let target = <HTMLInputElement>event.target;
     let foundFile = this.files.find((f) => f == file);
     if (!foundFile) {
@@ -76,7 +81,7 @@ export class ToolOneComponent implements OnInit {
     this.outputMimeType = target.value;
   }
 
-  deleteFile(file: ConvertableFile): void {
+  deleteFile(file: ConvertibleFile): void {
     this.files = this.files.filter((f) => f != file);
   }
 
