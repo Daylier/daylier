@@ -78,7 +78,7 @@ export class JsPDFConverter {
 
     return p;
   }
-
+  
   // Calculates the best possible position of an image on the A4 paper format,
   // so that the maximal area of A4 is used and the image ratio is preserved.
   private imageDimensionsOnA4 = (dimensions: ImageDimension) => {
