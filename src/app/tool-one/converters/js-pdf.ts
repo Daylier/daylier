@@ -18,42 +18,6 @@ interface ImageDimension {
   height: number;
 }
 
-// Calculates the best possible position of an image on the A4 paper format,
-// so that the maximal area of A4 is used and the image ratio is preserved.
-const imageDimensionsOnA4 = (dimensions: ImageDimension) => {
-  const isLandscapeImage = dimensions.width >= dimensions.height;
-
-  // If the image is in landscape, the full width of A4 is used.
-  if (isLandscapeImage) {
-    return {
-      width: A4_PAPER_DIMENSIONS.width,
-      height:
-        A4_PAPER_DIMENSIONS.width / (dimensions.width / dimensions.height),
-    };
-  }
-
-  // If the image is in portrait and the full height of A4 would skew
-  // the image ratio, we scale the image dimensions.
-  const imageRatio = dimensions.width / dimensions.height;
-  if (imageRatio > A4_PAPER_RATIO) {
-    const imageScaleFactor =
-      (A4_PAPER_RATIO * dimensions.height) / dimensions.width;
-
-    const scaledImageHeight = A4_PAPER_DIMENSIONS.height * imageScaleFactor;
-
-    return {
-      height: scaledImageHeight,
-      width: scaledImageHeight * imageRatio,
-    };
-  }
-
-  // The full height of A4 can be used without skewing the image ratio.
-  return {
-    width: A4_PAPER_DIMENSIONS.height / (dimensions.height / dimensions.width),
-    height: A4_PAPER_DIMENSIONS.height,
-  };
-};
-
 // The dimensions are in millimeters.
 const A4_PAPER_DIMENSIONS = {
   width: 210,
@@ -88,7 +52,7 @@ export class JsPDFConverter {
       let imageURL = URL.createObjectURL(file);
       let image = new Image();
       image.onload = () => {
-        const imageDimensions = imageDimensionsOnA4({
+        const imageDimensions = this.imageDimensionsOnA4({
           width: image.width,
           height: image.height,
         });
@@ -114,4 +78,41 @@ export class JsPDFConverter {
 
     return p;
   }
+  
+  // Calculates the best possible position of an image on the A4 paper format,
+  // so that the maximal area of A4 is used and the image ratio is preserved.
+  private imageDimensionsOnA4 = (dimensions: ImageDimension) => {
+    const isLandscapeImage = dimensions.width >= dimensions.height;
+
+    // If the image is in landscape, the full width of A4 is used.
+    if (isLandscapeImage) {
+      return {
+        width: A4_PAPER_DIMENSIONS.width,
+        height:
+          A4_PAPER_DIMENSIONS.width / (dimensions.width / dimensions.height),
+      };
+    }
+
+    // If the image is in portrait and the full height of A4 would skew
+    // the image ratio, we scale the image dimensions.
+    const imageRatio = dimensions.width / dimensions.height;
+    if (imageRatio > A4_PAPER_RATIO) {
+      const imageScaleFactor =
+        (A4_PAPER_RATIO * dimensions.height) / dimensions.width;
+
+      const scaledImageHeight = A4_PAPER_DIMENSIONS.height * imageScaleFactor;
+
+      return {
+        height: scaledImageHeight,
+        width: scaledImageHeight * imageRatio,
+      };
+    }
+
+    // The full height of A4 can be used without skewing the image ratio.
+    return {
+      width:
+        A4_PAPER_DIMENSIONS.height / (dimensions.height / dimensions.width),
+      height: A4_PAPER_DIMENSIONS.height,
+    };
+  };
 }
